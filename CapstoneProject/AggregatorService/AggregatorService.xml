@@ -1,0 +1,293 @@
+﻿<?xml version="1.0"?>
+<doc>
+	<assembly>
+		<name>AggregatorService</name>
+	</assembly>
+	<members>
+		<member name="T:AggregatorService.Controllers.AggregatorController">
+			<summary>
+				Performs all logic for the News Aggregator
+			</summary>
+		</member>
+		<member name="M:AggregatorService.Controllers.AggregatorController.#ctor(Microsoft.Extensions.Logging.ILogger{AggregatorService.Controllers.AggregatorController})">
+			<summary>
+				Create a new AggregatorController
+			</summary>
+			<param name="logger"></param>
+		</member>
+		<!--<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Datasets(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get Uploaded Datasets based on a filter
+			</summary>
+			<param name="filter">If no datasets provided in filter than the last 20 uploaded datasets will be returned</param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Update(HS.Cloud.Microservice.Model.GraphDataset)">
+			<summary>
+				Update a dataset.  Currently you can only update the dataset name.
+			</summary>
+			<param name="dataset"></param>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Delete(System.Collections.Generic.HashSet{System.Int32})">
+			<summary>
+				Delete a list of dataset ids
+			</summary>
+			<param name="datasets"></param>
+			<returns>List of dataset ids removed</returns>
+		</member>
+		<member name="T:HS.Cloud.Microservice.Controllers.ResultsController">
+			<summary>
+				Get results
+			</summary>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.#ctor(Microsoft.Extensions.Logging.ILogger{HS.Cloud.Microservice.Controllers.ResultsController},HS.Cloud.DataAccess.ResultsContext)">
+			<summary>
+				Create a new results controller
+			</summary>
+			<param name="logger"></param>
+			<param name="context"></param>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.Materials(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get Materials based on a filter
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.HsComponents(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get HsCompoennts based on a filter
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.HSComponentSolutions(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get HsComponentSolutions based on a filter
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.HsVariables(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get HsVariables based on a filter
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.HsVariablePlycounts(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get HsVariablePlyCounts based on a filter
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.UploadStatuses">
+			<summary>
+				Get all UploadStatuses
+			</summary>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.AreaWeightedAverageUnitWeightByMaterial(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get data to represent area weighted average unit weight by material.
+				Y-axis = area weighted average unit weight
+				X-axis = material
+				Y-axis are doubles, X-axis are strings
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.AreaWeightedAverageUnitWeightBySpacing(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get data to represent area weighted average unit weight by spacing.
+				Y-axis = area weighted average unit weight
+				X-axis = spacing
+				All values are double
+			</summary>
+			<param name="filter"></param>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.ResultsController.TotalWeightByDataset(HS.Cloud.Microservice.Model.ResultsFilter)">
+			<summary>
+				Get total weight of each dataset listed in the passed in filter
+			</summary>
+			<param name="filter"></param>
+			<returns>
+				List of DatasetGraphData with an entry for each dataset.  Each entry
+				has list of SimpleGraphData that has the dataset name for the x-axis and weight
+				for the y-axis.
+			</returns>
+		</member>
+		<member name="T:HS.Cloud.Microservice.Controllers.UploadController">
+			<summary>
+				Uploads data to the server
+			</summary>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.UploadController.#ctor(Microsoft.Extensions.Logging.ILogger{HS.Cloud.Microservice.Controllers.UploadController})">
+			<summary>
+				Create a new UploadController
+			</summary>
+			<param name="logger"></param>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.UploadController.Get">
+			<summary>
+				Get current time
+			</summary>
+			<returns></returns>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.UploadController.Post(HS.Cloud.Microservice.Request)">
+			<summary>
+				Upload a new set of data
+			</summary>
+			<param name="request"></param>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.UploadController.PostFile(Microsoft.AspNetCore.Http.IFormFile)">
+			<summary>
+				Test method to upload a new set of data to a local DB
+			</summary>
+			<param name="file"></param>
+		</member>
+		<member name="M:HS.Cloud.Microservice.Controllers.UploadController.PostLocal(System.String)">
+			<summary>
+				Test method to upload a new set of data to a local DB
+			</summary>
+			<param name="file"></param>
+		</member>
+		<member name="T:HS.Cloud.Microservice.Model.DatasetGraphData">
+			<summary>
+				Holds dataset graph data
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.DatasetGraphData.Dataset">
+			<summary>
+				Information about the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.DatasetGraphData.GraphData">
+			<summary>
+				Data used for a graph of this dataset.  Each solution will be a
+				separate entry in the dicitionary.
+			</summary>
+		</member>
+		<member name="T:HS.Cloud.Microservice.Model.GraphDataset">
+			<summary>
+				Information about a dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.DatasetId">
+			<summary>
+				ID for the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.DatasetName">
+			<summary>
+				Name of the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.Date">
+			<summary>
+				Date the dataset was uploaded
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.IsProcessing">
+			<summary>
+				Speicifies if the dataset is still processing
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.DatabaseName">
+			<summary>
+				The name of the database used to generate the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.ProjectName">
+			<summary>
+				The project name used to generate the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.GraphDataset.UserDisplayName">
+			<summary>
+				The display name for the user who uploaded the dataset
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.ResultsFilter.DatasetIds">
+			<summary>
+				List of datasets to include in results
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.ResultsFilter.SolutionIds">
+			<summary>
+				List of solutions to include in results.  Can be empty.
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.ResultsFilter.ZoneIds">
+			<summary>
+				List of zone ids to include in results
+			</summary>
+		</member>
+		<member name="T:HS.Cloud.Microservice.Model.SimpleGraphData">
+			<summary>
+				Generic simple graph data
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.DatasetId">
+			<summary>
+				The dataset id for this data
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.SolutionId">
+			<summary>
+				The solution id for this data
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.XDoubles">
+			<summary>
+				X values as doubles
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.XInts">
+			<summary>
+				X values as ints
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.XStrings">
+			<summary>
+				X values as strings
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.YDoubles">
+			<summary>
+				Y values as doubles
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.YInts">
+			<summary>
+				Y values as ints
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.YStrings">
+			<summary>
+				Y values as strings
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.Complete">
+			<summary>
+				Indicates that this data is complete.  Could mean different things
+				for different graphs.  For example, it could mean that the data
+				used to generate a value covers all zones.  If false it would mean
+				that not all zones had a value that could be factored into the value,
+				hence it's incomplete.
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.ZonesCovered">
+			<summary>
+				Number of zones covered by this entry
+			</summary>
+		</member>
+		<member name="P:HS.Cloud.Microservice.Model.SimpleGraphData.TotalZones">
+			<summary>
+				Total zones contained in dataset
+			</summary>
+		</member>-->
+	</members>
+</doc>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AggregatorWorkflow;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,21 @@ namespace AggregatorService.Controllers
         public AggregatorController(ILogger<AggregatorController> logger)
         {
             _logger = logger;
+        }
+
+        [HttpGet("GetTopics")]
+        public JsonResult GetTopics(int userId)
+        {
+            List<DataAccess.Models.Topic> topics = new List<DataAccess.Models.Topic>();
+
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

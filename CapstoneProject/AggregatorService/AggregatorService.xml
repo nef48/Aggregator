@@ -15,14 +15,14 @@
 			</summary>
 			<param name="logger"></param>
 		</member>
-		<!--<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Datasets(HS.Cloud.Microservice.Model.ResultsFilter)">
+		<member name="M:AggregatorService.Controllers.AggregatorController.GetTopics(System.Int32)">
 			<summary>
-				Get Uploaded Datasets based on a filter
+				Get topics for a user
 			</summary>
-			<param name="filter">If no datasets provided in filter than the last 20 uploaded datasets will be returned</param>
+			<param name="userId">Identifier for the user</param>
 			<returns></returns>
 		</member>
-		<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Update(HS.Cloud.Microservice.Model.GraphDataset)">
+		<!--<member name="M:HS.Cloud.Microservice.Controllers.DatasetController.Update(HS.Cloud.Microservice.Model.GraphDataset)">
 			<summary>
 				Update a dataset.  Currently you can only update the dataset name.
 			</summary>

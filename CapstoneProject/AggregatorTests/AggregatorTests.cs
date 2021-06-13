@@ -87,5 +87,14 @@ namespace AggregatorTests
 
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void TestGetTopicsForUser()
+        {
+            List<Topic> expectedTopics = new List<Topic>() { AggregatorWorkflow.AggregatorUtility.GetTopic(1) };
+            List<Topic> actualTopics = AggregatorWorkflow.AggregatorUtility.GetTopicsForUser(1);
+
+            CollectionAssert.AreEqual(expectedTopics, actualTopics);
+        }
     }
 }

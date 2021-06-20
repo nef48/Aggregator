@@ -1,29 +1,30 @@
-﻿using DataModels2;
+﻿using DataModels;
 using LinqToDB;
-using LinqToDB.Data;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AggregatorWorkflow
+namespace AggregatorController
 {
     public static class AggregatorUtility
     {
-        private const string CONNECT_STRING_NAME = "AggregatorDatabase";
+        private const string CONNECT_STRING_NAME = "MySQLConnectionString";
 
         #region Topic Methods
 
         public static List<Topic> GetAllTopics()
         {
             List<Topic> allTopics = new List<Topic>();
-            string connectionString = "Server=localhost;Port=3307;Database=Aggregator;Uid=root;Pwd=password;charset=utf8;";//ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
+            //string connectionString = "Server=localhost;Port=3307;Database=Aggregator;Uid=root;Pwd=password;charset=utf8;";//ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
+            //string connectionString = config.GetConnectionString(CONNECT_STRING_NAME);
+            //string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB(CONNECT_STRING_NAME))
+                using (AggregatorDB db = new AggregatorDB())
                 {
                     allTopics = (from topics in db.Topics select topics).ToList();
                 }
@@ -45,8 +46,10 @@ namespace AggregatorWorkflow
             {
                 using (AggregatorDB db = new AggregatorDB())
                 {
-                    topicsForUser = (from topics in db.Topics join userTopics in db.Usertopics on topics.TopicID equals userTopics.TopicID
-                                     where userTopics.UserID == userID select topics).ToList();
+                    topicsForUser = (from topics in db.Topics
+                                     join userTopics in db.Usertopics on topics.TopicID equals userTopics.TopicID
+                                     where userTopics.UserID == userID
+                                     select topics).ToList();
                 }
             }
             catch (Exception ex)
@@ -77,7 +80,7 @@ namespace AggregatorWorkflow
             return topic;
         }
 
-        public static bool AddTopicToUser(int topicID, int UserID)
+        public static bool AddTopicToUser(int topicID, int userID)
         {
             string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
@@ -87,7 +90,7 @@ namespace AggregatorWorkflow
                 {
                     Usertopic userTopic = new Usertopic()
                     {
-                        UserID = UserID,
+                        UserID = userID,
                         TopicID = topicID
                     };
 

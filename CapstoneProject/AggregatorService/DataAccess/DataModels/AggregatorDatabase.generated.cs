@@ -15,7 +15,7 @@ using LinqToDB;
 using LinqToDB.Configuration;
 using LinqToDB.Mapping;
 
-namespace DataModels2
+namespace DataModels
 {
 	/// <summary>
 	/// Database       : Aggregator

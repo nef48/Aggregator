@@ -1,22 +1,15 @@
-using AggregatorService.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+using AggregatorController.DataAccess;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
-namespace AggregatorService
+namespace AggregatorController
 {
     public class Startup
     {
@@ -51,11 +44,12 @@ namespace AggregatorService
                 connection = Configuration.GetConnectionString(CONNECTION_STRING_NAME);
             }
 
-            //services.AddDbContext<ResultsContext>(options => options
-            //    .UseMySql(
-            //        connection
-            //    )
-            //);
+            services.AddDbContext<ResultsContext>(options => options
+                .UseMySql(
+                    connection,
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql)
+                )
+            );
 
             services.AddCors(options =>
             {
@@ -81,7 +75,9 @@ namespace AggregatorService
 
             app.UseHttpsRedirection(); 
 
-            app.UseRouting();
+            app.UseRouting(); 
+            
+            app.UseCors("AllowAllHeaders");
 
             app.UseAuthorization();
 

@@ -9,7 +9,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import InputBase from '@material-ui/core/InputBase';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import * as API from '../API/AggregatorAPI';
+import { Topic } from '../Classes/Topic';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -80,14 +82,25 @@ const useStyles = makeStyles((theme) =>
 export default function HomePage() {
     const classes = useStyles();
     const menuId = 'primary-search-account-menu';
+    const {allTopics, setAllTopics} = React.useState<Array<Topic>>([]);
+
+    React.useEffect(() => {
+      getAllTopics();
+    }, []);
+
+    const getAllTopics = () => {
+      API.GetAllTopics().then(response => {
+        setAllTopics(response);
+      });
+    }
 
     const handleProfileMenuOpen = (event) => {
       alert("User Profile page opens here.");
     };
 
-    const handleTopicButtonClicked = () => {
-      API.GetAllTopics();
-    }
+    let topicList = allTopics.map(item => {
+      return (<Button>item.TopicName</Button>)
+    });
 
     return (
         <div>
@@ -134,9 +147,12 @@ export default function HomePage() {
             </React.Fragment>
             <React.Fragment>
               <div style={{ marginTop: 75 }}>
-                <Button variant="contained" color="primary" onClick={handleTopicButtonClicked}>
-                  Get All Topics
-                </Button>
+                <ButtonGroup color="primary" variant="contained">
+                  {/* <Button>One</Button>
+                  <Button>Two</Button>
+                  <Button>Three</Button> */}
+                  {topicList}
+                </ButtonGroup>
               </div>
             </React.Fragment>
         </div>

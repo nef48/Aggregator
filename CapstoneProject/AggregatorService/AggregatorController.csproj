@@ -29,10 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AggregatorWorkflow\AggregatorWorkflow.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="AggregatorService.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

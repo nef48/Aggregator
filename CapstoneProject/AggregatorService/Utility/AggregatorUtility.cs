@@ -1,4 +1,5 @@
-﻿using DataModels;
+﻿using AggregatorController.DataAccess;
+using DataModels;
 using LinqToDB;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,23 +12,19 @@ namespace AggregatorController
 {
     public static class AggregatorUtility
     {
-        private const string CONNECT_STRING_NAME = "MySQLConnectionString";
-
         #region Topic Methods
 
-        public static List<Topic> GetAllTopics()
+        public static List<Topic> GetAllTopics(ResultsContext dbContext)
         {
             List<Topic> allTopics = new List<Topic>();
-            //string connectionString = "Server=localhost;Port=3307;Database=Aggregator;Uid=root;Pwd=password;charset=utf8;";//ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
-            //string connectionString = config.GetConnectionString(CONNECT_STRING_NAME);
-            //string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB())
-                {
-                    allTopics = (from topics in db.Topics select topics).ToList();
-                }
+                //using (AggregatorDB db = new AggregatorDB())
+                //{
+                //    allTopics = (from topics in db.Topics select topics).ToList();
+                //}
+                allTopics = dbContext.Topic.ToList();
             }
             catch (Exception ex)
             {
@@ -37,20 +34,13 @@ namespace AggregatorController
             return allTopics;
         }
 
-        public static List<Topic> GetTopicsForUser(int userID)
+        public static List<Topic> GetTopicsForUser(ResultsContext dbContext, int userID)
         {
             List<Topic> topicsForUser = new List<Topic>();
-            string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB())
-                {
-                    topicsForUser = (from topics in db.Topics
-                                     join userTopics in db.Usertopics on topics.TopicID equals userTopics.TopicID
-                                     where userTopics.UserID == userID
-                                     select topics).ToList();
-                }
+                topicsForUser = dbContext.Usertopic.Where(x => x.UserID == userID).Select(x => x.Topic).ToList();
             }
             catch (Exception ex)
             {
@@ -60,17 +50,13 @@ namespace AggregatorController
             return topicsForUser;
         }
 
-        public static Topic GetTopic(int topicID)
+        public static Topic GetTopic(ResultsContext dbContext, int topicID)
         {
             Topic topic = null;
-            string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB(connectionString))
-                {
-                    topic = db.Topics.Where(x => x.TopicID == topicID).FirstOrDefault();
-                }
+                topic = dbContext.Topic.Where(x => x.TopicID == topicID).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -80,22 +66,19 @@ namespace AggregatorController
             return topic;
         }
 
-        public static bool AddTopicToUser(int topicID, int userID)
+        public static bool AddTopicToUser(ResultsContext dbContext, int topicID, int userID)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB(connectionString))
+                Usertopic userTopic = new Usertopic()
                 {
-                    Usertopic userTopic = new Usertopic()
-                    {
-                        UserID = userID,
-                        TopicID = topicID
-                    };
+                    UserID = userID,
+                    TopicID = topicID
+                };
 
-                    db.InsertWithInt32IdentityAsync(userTopic);
-                }
+                dbContext.Usertopic.Add(userTopic);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -109,16 +92,13 @@ namespace AggregatorController
 
         #region User Methods
 
-        public static bool AddUserToDatabase(Userdata userData)
+        public static bool AddUserToDatabase(ResultsContext dbContext, Userdata userData)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB(connectionString))
-                {
-                    db.InsertWithInt32Identity(userData);
-                }
+                dbContext.Userdata.Add(userData);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -128,17 +108,13 @@ namespace AggregatorController
             return true;
         }
 
-        public static Userdata GetUser(int userID)
+        public static Userdata GetUser(ResultsContext dbContext, int userID)
         {
             Userdata user = null;
-            string connectionString = ConfigurationManager.ConnectionStrings[CONNECT_STRING_NAME].ConnectionString;
 
             try
             {
-                using (AggregatorDB db = new AggregatorDB(connectionString))
-                {
-                    user = db.Userdatas.Where(x => x.UserID == userID).FirstOrDefault();
-                }
+                user = dbContext.Userdata.Where(x => x.UserID == userID).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -146,6 +122,26 @@ namespace AggregatorController
             }
 
             return user;
+        }
+
+        public static LoginObject GetUserAndTopics(ResultsContext dbContext, string username, string password)
+        {
+            LoginObject userAndTopics = new LoginObject();
+
+            try
+            {
+                Userdata user = dbContext.Userdata
+                    .Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
+
+                userAndTopics.User = user;
+                userAndTopics.Topics = dbContext.Usertopic.Where(x => x.UserID == user.UserID).Select(x => x.Topic).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return userAndTopics;
         }
 
         #endregion

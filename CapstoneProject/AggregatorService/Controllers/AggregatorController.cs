@@ -15,12 +15,11 @@ namespace AggregatorController
     [Route("[controller]")]
     public class AggregatorController : ControllerBase
     {
-        private ResultsContext _restultsContext;
+        private ResultsContext _resultsContext;
 
         public AggregatorController(ResultsContext context)
         {
-            _restultsContext = context;
-            //string connectionString = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ConnectionString;
+            _resultsContext = context;
         }
 
         #region Topic Methods
@@ -32,8 +31,8 @@ namespace AggregatorController
 
             try
             {
-                //topics = AggregatorUtility.GetAllTopics();
-                topics = _restultsContext.Topics.ToList();
+                topics = AggregatorUtility.GetAllTopics(_resultsContext);
+                //topics = _restultsContext.Topic.Where(x => true).ToList();
             }
             catch (Exception ex)
             {
@@ -50,7 +49,7 @@ namespace AggregatorController
 
             try
             {
-                topics = AggregatorUtility.GetTopicsForUser(userId);
+                topics = AggregatorUtility.GetTopicsForUser(_resultsContext, userId);
             }
             catch (Exception ex)
             {
@@ -67,7 +66,7 @@ namespace AggregatorController
 
             try
             {
-                topic = AggregatorUtility.GetTopic(topicId);
+                topic = AggregatorUtility.GetTopic(_resultsContext, topicId);
             }
             catch (Exception ex)
             {
@@ -84,7 +83,7 @@ namespace AggregatorController
 
             try
             {
-                result = AggregatorUtility.AddTopicToUser(topicID, userID);
+                result = AggregatorUtility.AddTopicToUser(_resultsContext, topicID, userID);
             }
             catch (Exception ex)
             {
@@ -99,13 +98,21 @@ namespace AggregatorController
         #region User Methods
 
         [HttpPost("AddUserToDatabase")]
-        public bool AddUserToDatabase(Userdata userData)
+        public bool AddUserToDatabase(string username, string password)
         {
             bool result = false;
 
             try
             {
-                result = AggregatorUtility.AddUserToDatabase(userData);
+                Userdata userData = new Userdata()
+                { 
+                    Username = username,
+                    Password = password,
+                    DateCreated = DateTime.Now,
+                    LastLogin = DateTime.Now
+                };
+
+                result = AggregatorUtility.AddUserToDatabase(_resultsContext, userData);
             }
             catch (Exception ex)
             {
@@ -122,7 +129,7 @@ namespace AggregatorController
 
             try
             {
-                user = AggregatorUtility.GetUser(userID);
+                user = AggregatorUtility.GetUser(_resultsContext, userID);
             }
             catch (Exception ex)
             {
@@ -130,6 +137,23 @@ namespace AggregatorController
             }
 
             return user;
+        }
+
+        [HttpGet("GetUserAndTopics")]
+        public LoginObject GetUserAndTopics(string username, string password)
+        {
+            LoginObject userAndTopics = new LoginObject();
+
+            try
+            {
+                userAndTopics = AggregatorUtility.GetUserAndTopics(_resultsContext, username, password);
+            }
+            catch (Exception ex)
+            {
+                userAndTopics = null;
+            }
+
+            return userAndTopics;
         }
 
         #endregion

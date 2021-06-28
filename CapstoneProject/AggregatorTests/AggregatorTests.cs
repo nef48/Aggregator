@@ -1,6 +1,11 @@
+using AggregatorController.DataAccess;
 using DataModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace AggregatorTests
 {
@@ -27,79 +32,112 @@ namespace AggregatorTests
                 new Topic(){ TopicName = "World Events", TopicID = 14}
             };
 
-            //List<Topic> actualTopics = AggregatorController.AggregatorUtility.GetAllTopics();
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //Assert.AreEqual(expectedTopics.Count, actualTopics.Count);
-            //CollectionAssert.AreEqual(expectedTopics, actualTopics);
-            //Assert.AreEqual(true, true);
+            List<Topic> actualTopics = AggregatorController.AggregatorUtility.GetAllTopics(new ResultsContext(optionsBuilder.Options));
+
+            Assert.AreEqual(expectedTopics.Count, actualTopics.Count);
         }
 
         [TestMethod]
         public void TestGetTopic()
         {
-            //Topic expectedTopic = new Topic() { TopicID = 1, TopicName = "Politics" };
-            //Topic actualTopic = AggregatorWorkflow.AggregatorUtility.GetTopic(1);
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //Assert.IsNotNull(actualTopic);
-            //Assert.AreEqual(expectedTopic.TopicName, actualTopic.TopicName);
-            Assert.AreEqual(true, true);
+            Topic expectedTopic = new Topic() { TopicID = 1, TopicName = "Politics" };
+            Topic actualTopic = AggregatorController.AggregatorUtility.GetTopic(new ResultsContext(optionsBuilder.Options), 1);
+
+            Assert.IsNotNull(actualTopic);
+            Assert.AreEqual(expectedTopic.TopicName, actualTopic.TopicName);
         }
 
         [TestMethod]
         public void TestAddUserToDatabase()
         {
-            //Userdata newUser = new Userdata()
-            //{
-            //    Username = "SampleUser",
-            //    Password = "password",
-            //    DateCreated = System.DateTime.Now,
-            //    LastLogin = System.DateTime.Now
-            //};
+            Userdata newUser = new Userdata()
+            {
+                Username = "SampleUser",
+                Password = "password",
+                DateCreated = DateTime.Now,
+                LastLogin = DateTime.Now
+            };
 
-            //bool addResult = AggregatorWorkflow.AggregatorUtility.AddUserToDatabase(newUser);
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //Assert.IsTrue(addResult);
-            Assert.AreEqual(true, true);
+            bool addResult = AggregatorController.AggregatorUtility.AddUserToDatabase(new ResultsContext(optionsBuilder.Options), newUser);
+
+            Assert.IsTrue(addResult);
         }
 
         [TestMethod]
         public void TestGetUser()
         {
-            //Userdata newUser = new Userdata()
-            //{
-            //    Username = "SampleUser",
-            //    Password = "password",
-            //    DateCreated = System.DateTime.Now,
-            //    LastLogin = System.DateTime.Now
-            //};
+            Userdata newUser = new Userdata()
+            {
+                Username = "SampleUser",
+                Password = "password",
+                DateCreated = DateTime.Now,
+                LastLogin = DateTime.Now
+            };
 
-            //Userdata existingUser = AggregatorWorkflow.AggregatorUtility.GetUser(1);
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //Assert.IsNotNull(existingUser);
-            //Assert.AreEqual(newUser.Username, existingUser.Username);
-            Assert.AreEqual(true, true);
+            Userdata existingUser = AggregatorController.AggregatorUtility.GetUser(new ResultsContext(optionsBuilder.Options), 1);
+
+            Assert.IsNotNull(existingUser);
+            Assert.AreEqual(newUser.Username, existingUser.Username);
         }
 
         [TestMethod]
         public void TestAddTopicToUser()
         {
-            //Userdata user = AggregatorWorkflow.AggregatorUtility.GetUser(1);
-            //Topic topic = AggregatorWorkflow.AggregatorUtility.GetTopic(1);
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //bool result = AggregatorWorkflow.AggregatorUtility.AddTopicToUser(topic.TopicID, user.UserID);
+            Userdata user = AggregatorController.AggregatorUtility.GetUser(new ResultsContext(optionsBuilder.Options), 1);
+            Topic topic = AggregatorController.AggregatorUtility.GetTopic(new ResultsContext(optionsBuilder.Options), 1);
 
-            //Assert.IsTrue(result);
-            Assert.AreEqual(true, true);
+            bool result = AggregatorController.AggregatorUtility.AddTopicToUser(new ResultsContext(optionsBuilder.Options), topic.TopicID, user.UserID);
+
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
         public void TestGetTopicsForUser()
         {
-            //List<Topic> expectedTopics = new List<Topic>() { AggregatorWorkflow.AggregatorUtility.GetTopic(1) };
-            //List<Topic> actualTopics = AggregatorWorkflow.AggregatorUtility.GetTopicsForUser(1);
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
 
-            //CollectionAssert.AreEqual(expectedTopics, actualTopics);
-            Assert.AreEqual(true, true);
+            List<Topic> expectedTopics = new List<Topic>() { AggregatorController.AggregatorUtility.GetTopic(new ResultsContext(optionsBuilder.Options), 1) };
+            List<Topic> actualTopics = AggregatorController.AggregatorUtility.GetTopicsForUser(new ResultsContext(optionsBuilder.Options), 1);
+
+            Assert.AreEqual(expectedTopics.Count, actualTopics.Count);
+        }
+
+        [TestMethod]
+        public void TestGetUserAndTopics()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
+
+            Userdata expectedUser = AggregatorController.AggregatorUtility.GetUser(new ResultsContext(optionsBuilder.Options), 1);
+            List<Topic> expectedTopics = new List<Topic>() { AggregatorController.AggregatorUtility.GetTopic(new ResultsContext(optionsBuilder.Options), 1) };
+
+            LoginObject actualLoginObject = AggregatorController.AggregatorUtility.GetUserAndTopics(new ResultsContext(optionsBuilder.Options), "SampleUser", "password");
+
+            Assert.AreEqual(expectedUser.Username, actualLoginObject.User.Username);
+            Assert.AreEqual(expectedTopics.Count, actualLoginObject.Topics.Count);
         }
     }
 }

@@ -1,19 +1,15 @@
 ﻿using DataModels;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AggregatorController.DataAccess
 {
     public class ResultsContext : DbContext
     {
-        public DbSet<Topic> Topics { get; set; }
-        public DbSet<Userdata> Users { get; set; }
-        public DbSet<Usertopic> UserTopics { get; set; }
-        public DbSet<Article> Articles { get; set; }
-        public DbSet<Userarticle> UserArticles { get; set; }
+        public DbSet<Topic> Topic { get; set; }
+        public DbSet<Userdata> Userdata { get; set; }
+        public DbSet<Usertopic> Usertopic { get; set; }
+        public DbSet<Article> Article { get; set; }
+        public DbSet<Userarticle> Userarticle { get; set; }
 
         public ResultsContext(DbContextOptions<ResultsContext> options)
             : base(options)

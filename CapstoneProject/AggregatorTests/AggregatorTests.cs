@@ -1,4 +1,5 @@
 using AggregatorController.DataAccess;
+using AggregatorController.DataAccess.DataModels;
 using DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -138,6 +139,22 @@ namespace AggregatorTests
 
             Assert.AreEqual(expectedUser.Username, actualLoginObject.User.Username);
             Assert.AreEqual(expectedTopics.Count, actualLoginObject.Topics.Count);
+        }
+
+        [TestMethod]
+        public void TestGetNewsFeed()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
+
+            Topic topic = AggregatorController.AggregatorUtility.GetTopic(new ResultsContext(optionsBuilder.Options), 3);
+
+            List<rssChannelItem> items = new List<rssChannelItem>();
+
+            items = AggregatorController.AggregatorUtility.GetNewsFeed(new ResultsContext(optionsBuilder.Options), topic);
+
+            Assert.AreNotEqual(items.Count, 0);
         }
     }
 }

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace AggregatorController
 {
@@ -16,6 +16,7 @@ namespace AggregatorController
     public class AggregatorController : ControllerBase
     {
         private ResultsContext _resultsContext;
+        private Timer _articleUpdateTimer;
 
         public AggregatorController(ResultsContext context)
         {
@@ -138,9 +139,9 @@ namespace AggregatorController
 
             return user;
         }
-
-        [HttpGet("GetUserAndTopics")]
-        public LoginObject GetUserAndTopics(string username, string password)
+ 
+        [HttpGet("UserLogin")]
+        public LoginObject UserLogin(string username, string password)
         {
             LoginObject userAndTopics = new LoginObject();
 

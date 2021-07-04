@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) =>
 export default function HomePage() {
     const classes = useStyles();
     const menuId = 'primary-search-account-menu';
-    const {allTopics, setAllTopics} = React.useState<Array<Topic>>([]);
+    const { allTopics, setAllTopics } = React.useState<Array<Topic>>([]);
 
     React.useEffect(() => {
       getAllTopics();

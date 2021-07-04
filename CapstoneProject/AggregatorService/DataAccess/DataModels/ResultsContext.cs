@@ -10,6 +10,7 @@ namespace AggregatorController.DataAccess
         public DbSet<Usertopic> Usertopic { get; set; }
         public DbSet<Article> Article { get; set; }
         public DbSet<Userarticle> Userarticle { get; set; }
+        public DbSet<Topicmap> Topicmap { get; set; }
 
         public ResultsContext(DbContextOptions<ResultsContext> options)
             : base(options)
@@ -27,6 +28,8 @@ namespace AggregatorController.DataAccess
             modelBuilder.Entity<Article>().HasKey(k => new { k.ArticleID });
 
             modelBuilder.Entity<Userarticle>().HasKey(k => new { k.UserArticleID });
+
+            modelBuilder.Entity<Topicmap>().HasKey(k => new { k.TopicMapID });
         }
     }
 }

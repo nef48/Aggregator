@@ -26,6 +26,7 @@ namespace DataModels
 	{
 		public ITable<Article>     Articles     { get { return this.GetTable<Article>(); } }
 		public ITable<Topic>       Topics       { get { return this.GetTable<Topic>(); } }
+		public ITable<Topicmap>    Topicmaps    { get { return this.GetTable<Topicmap>(); } }
 		public ITable<Userarticle> Userarticles { get { return this.GetTable<Userarticle>(); } }
 		public ITable<Userdata>    Userdatas    { get { return this.GetTable<Userdata>(); } }
 		public ITable<Usertopic>   Usertopics   { get { return this.GetTable<Usertopic>(); } }
@@ -95,6 +96,14 @@ namespace DataModels
 		public IEnumerable<Usertopic> Usertopicibfks { get; set; }
 
 		#endregion
+	}
+
+	[Table("topicmap")]
+	public partial class Topicmap
+	{
+		[PrimaryKey, Identity] public int    TopicMapID { get; set; } // int
+		[Column,     NotNull ] public string MapFrom    { get; set; } // varchar(256)
+		[Column,     NotNull ] public string MapTo      { get; set; } // varchar(256)
 	}
 
 	[Table("userarticle")]
@@ -185,6 +194,12 @@ namespace DataModels
 		{
 			return table.FirstOrDefault(t =>
 				t.TopicID == TopicID);
+		}
+
+		public static Topicmap Find(this ITable<Topicmap> table, int TopicMapID)
+		{
+			return table.FirstOrDefault(t =>
+				t.TopicMapID == TopicMapID);
 		}
 
 		public static Userarticle Find(this ITable<Userarticle> table, int UserArticleID)

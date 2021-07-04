@@ -1,12 +1,16 @@
 ﻿using AggregatorController.DataAccess;
+using AggregatorController.DataAccess.DataModels;
 using DataModels;
 using LinqToDB;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace AggregatorController
 {
@@ -142,6 +146,32 @@ namespace AggregatorController
             }
 
             return userAndTopics;
+        }
+        
+        #endregion
+
+        #region News Feed Methods
+
+        public static List<rssChannelItem> GetNewsFeed(ResultsContext dbContext, Topic topic)
+        {
+            List<string> searchTopics = dbContext.Topicmap.Where(x => x.MapFrom.ToLower() == topic.TopicName.ToLower())
+                                                .Select(x => x.MapTo).ToList();
+
+            List<rssChannelItem> items = new List<rssChannelItem>();
+
+            foreach (string topicName in searchTopics)
+            {
+                string urlString = $"https://rss.nytimes.com/services/xml/rss/nyt/{topicName}.xml";
+
+                using (XmlTextReader reader = new XmlTextReader(urlString))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(rss));
+                    rss feed = (rss)serializer.Deserialize(reader);
+                    items.AddRange(feed.channel.item);
+                }
+            }
+
+            return items;
         }
 
         #endregion

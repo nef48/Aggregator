@@ -65,10 +65,13 @@ namespace DataModels
 	[Table("article")]
 	public partial class Article
 	{
-		[PrimaryKey, Identity] public int       ArticleID     { get; set; } // int
-		[Column,     Nullable] public string    ArticleTitle  { get; set; } // varchar(256)
-		[Column,     Nullable] public string    ArticleAuthor { get; set; } // varchar(256)
-		[Column,     Nullable] public DateTime? DatePublished { get; set; } // datetime
+		[PrimaryKey, Identity   ] public int       ArticleID             { get; set; } // int
+		[Column,        Nullable] public string    ArticleTitle          { get; set; } // varchar(256)
+		[Column,        Nullable] public string    ArticleAuthor         { get; set; } // varchar(256)
+		[Column,     NotNull    ] public string    ArticleLink           { get; set; } // varchar(256)
+		[Column,        Nullable] public DateTime? DatePublished         { get; set; } // datetime
+		[Column,        Nullable] public string    ArticleDescription    { get; set; } // varchar(256)
+		[Column,        Nullable] public string    AdditionalDescription { get; set; } // varchar(256)
 
 		#region Associations
 

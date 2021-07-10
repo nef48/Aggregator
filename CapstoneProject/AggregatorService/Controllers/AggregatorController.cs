@@ -16,7 +16,6 @@ namespace AggregatorController
     public class AggregatorController : ControllerBase
     {
         private ResultsContext _resultsContext;
-        private Timer _articleUpdateTimer;
 
         public AggregatorController(ResultsContext context)
         {
@@ -155,6 +154,35 @@ namespace AggregatorController
             }
 
             return userAndTopics;
+        }
+
+        #endregion
+
+        #region Article Methods
+
+        [HttpGet("GetArticles")]
+        public List<Article> GetArticles(Topic topic)
+        {
+            List<Article> articles = new List<Article>();
+
+            try
+            {
+                articles = AggregatorUtility.GetNewsFeed(_resultsContext, topic).Select(x => new Article()
+                {
+                    ArticleAuthor = x.creator,
+                    ArticleDescription = x.description,
+                    ArticleLink = x.link,
+                    DatePublished = DateTime.Parse(x.pubDate),
+                    ArticleTitle = x.title,
+                    AdditionalDescription = x.description1
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                articles = null;
+            }
+
+            return articles;
         }
 
         #endregion

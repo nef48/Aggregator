@@ -90,7 +90,8 @@ export default function HomePage() {
 
     const getAllTopics = () => {
       API.GetAllTopics().then(response => {
-        setAllTopics(response);
+        //setAllTopics(response);
+        console.dir(response);
       });
     }
 

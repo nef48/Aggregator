@@ -46,13 +46,17 @@ export function getFormattedUrl(controllerName: string, methodName: string): str
 
 export async function FetchApi(url: string, options?: any): Promise<Response> {
     try {
+        console.log("Fetch")
         console.dir(options);
         const res = await fetch(url, options);
+        console.dir(res);
         if (res.status === 401) {
             window.location.reload(true);
         }
         return res;
     } catch (err) {
+        console.log("ERROR")
+        console.log(err);
         throw err;
     }
 }

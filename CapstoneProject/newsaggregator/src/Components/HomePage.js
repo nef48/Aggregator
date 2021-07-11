@@ -92,6 +92,7 @@ export default function HomePage() {
       API.GetAllTopics().then(response => {
         //setAllTopics(response);
         console.dir(response);
+        console.log("YES")
       });
     }
 
@@ -99,9 +100,9 @@ export default function HomePage() {
       alert("User Profile page opens here.");
     };
 
-    let topicList = allTopics.map(item => {
+    let topicList = (allTopics !== null && allTopics !== undefined) ? allTopics.map(item => {
       return (<Button>item.TopicName</Button>)
-    });
+    }) : <div>Please Select a list of Topics to continue</div>
 
     return (
         <div>

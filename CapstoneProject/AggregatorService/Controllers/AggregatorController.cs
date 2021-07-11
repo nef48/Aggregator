@@ -1,5 +1,6 @@
 ﻿using AggregatorController.DataAccess;
 using DataModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using System.Threading;
 namespace AggregatorController
 {
     [ApiController]
+    [EnableCors]
     [Route("[controller]")]
     public class AggregatorController : ControllerBase
     {

@@ -5,6 +5,7 @@ export class Article {
     DatePublished: Date;
     ArticleTitle: string;
     AdditionalDescription: string;
+    ImageUrl: string;
 
     constructor() {
         this.ArticleAuthor = "";
@@ -13,5 +14,6 @@ export class Article {
         this.DatePublished = null;
         this.ArticleTitle = "";
         this.AdditionalDescription = "";
+        this.ImageUrl = "";
     }
 }

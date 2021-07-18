@@ -5,7 +5,7 @@ export async function GetAllTopics() {
     let fetchOptions = ApiFetchUtility.GetFetchOptions();
     fetchOptions['method'] = 'get';
 
-    let url = ApiFetchUtility.getFormattedUrl("Aggregator", "GetAllTopics");
+    let url = new URL(ApiFetchUtility.getFormattedUrl("Aggregator", "GetAllTopics"));
 
     const res = await ApiFetchUtility.FetchApi(url, fetchOptions);
     const json = await res.json();
@@ -13,12 +13,14 @@ export async function GetAllTopics() {
     return json;
 }
 
-export async function GetNewsFeed(topic: Topic) {
+export async function GetNewsFeed(searchTopic: string) {
     let fetchOptions = ApiFetchUtility.GetFetchOptions();
-    fetchOptions['method'] = 'get';
-    fetchOptions['body'] = JSON.stringify({ "topic" : topic });
+    fetchOptions['method'] = 'post';
+    let params = {topic: searchTopic}
 
-    let url = ApiFetchUtility.getFormattedUrl("Aggregator", "GetArticles");
+    let url = new URL(ApiFetchUtility.getFormattedUrl("Aggregator", "GetArticles"));
+
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
     const res = await ApiFetchUtility.FetchApi(url, fetchOptions);
     const json = await res.json();

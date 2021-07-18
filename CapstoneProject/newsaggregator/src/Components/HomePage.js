@@ -12,6 +12,12 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import * as API from '../API/AggregatorAPI';
 import { Topic } from '../Classes/Topic';
+import { IsNullOrUndefined } from '../Utilities/CommonUtilities';
+import ArticleCard from './ArticleCard';
+
+interface IHomePageProps {
+  selectedTopics: Topic[];
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -79,20 +85,20 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function HomePage() {
+export default function HomePage(props: IHomePageProps) {
     const classes = useStyles();
     const menuId = 'primary-search-account-menu';
-    const { allTopics, setAllTopics } = React.useState<Array<Topic>>([]);
+    //const [allTopics, setAllTopics] = React.useState([]);
+    const [selectedTopic, setSelectedTopic] = React.useState(null);
+    const [articles, setArticles] = React.useState([]);
 
     React.useEffect(() => {
-      getAllTopics();
+      //getAllTopics();
     }, []);
 
     const getAllTopics = () => {
       API.GetAllTopics().then(response => {
         //setAllTopics(response);
-        console.dir(response);
-        console.log("YES")
       });
     }
 
@@ -100,9 +106,23 @@ export default function HomePage() {
       alert("User Profile page opens here.");
     };
 
-    let topicList = (allTopics !== null && allTopics !== undefined) ? allTopics.map(item => {
-      return (<Button>item.TopicName</Button>)
+    const handleTopicSelection = (topic: string) => {
+      //let selectedTopic: Topic = allTopics.find(x => x.TopicName === topic);
+      let selectedTopic: Topic = props.selectedTopics.find(x => x.TopicName === topic);
+      setSelectedTopic(selectedTopic);
+      API.GetNewsFeed(topic).then(response => {
+        setArticles(response);
+      });
+    }
+
+    //let topicList = !IsNullOrUndefined(allTopics) ? allTopics.map(item => {
+    let topicList = !IsNullOrUndefined(props.selectedTopics) ? props.selectedTopics.map(item => {
+      return (<Button onClick={() => {handleTopicSelection(item.TopicName)}}>{item.TopicName}</Button>)
     }) : <div>Please Select a list of Topics to continue</div>
+
+    let articleList = !IsNullOrUndefined(articles) ? articles.map(art => {
+      return (<div style={{ display: "inline-block" }}><ArticleCard article={art} /></div>)
+    }) : <div>No Articles available for this topic.</div>
 
     return (
         <div>
@@ -149,14 +169,16 @@ export default function HomePage() {
             </React.Fragment>
             <React.Fragment>
               <div style={{ marginTop: 75 }}>
-                <ButtonGroup color="primary" variant="contained">
-                  {/* <Button>One</Button>
-                  <Button>Two</Button>
-                  <Button>Three</Button> */}
+                <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
                   {topicList}
                 </ButtonGroup>
               </div>
             </React.Fragment>
+            <React.Fragment>
+              <div style={{ width: "calc(100vw)", overflow: "hidden" }}>
+                {articleList}
+              </div>
+            </React.Fragment>
         </div>
-    )
+    );
 }

@@ -17,6 +17,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Article } from '../Classes/Article';
+import { IsNullOrEmpty } from '../Utilities/CommonUtilities';
 
 interface IArticleCardProps {
     article: Article
@@ -46,31 +47,42 @@ export default function ArticleCard(props: IArticleCardProps) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
+  console.dir(props.article);
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  let dateString = moment(props.article.DatePublished).format("MM/dd/YYYY HH:mm");
+  let dateString = moment(props.article.datePublished).format("MM/DD/YYYY");
 
   return (
-    <div>
-      <Card className={classes.root}>
-        <CardHeader title={props.article.ArticleTitle} subheader={props.article.ArticleAuthor + " " + dateString}/>
-        <CardMedia className={classes.media} title={props.article.ArticleTitle}/>
+    <div style={{ margin: 10 }}>
+      <Card className={classes.root} variant="outlined">
+        <CardHeader title={props.article.articleTitle} subheader={"By " + props.article.articleAuthor + " - " + dateString}/>
+        <CardMedia className={classes.media} title={props.article.articleTitle} image={props.article.imageUrl}/>
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            {props.article.ArticleDescription}
+            {props.article.articleDescription}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites">
             <FavoriteIcon />
           </IconButton>
+          {!IsNullOrEmpty(props.article.additionalDescription) &&
+          <IconButton className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })} 
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more">
+          <ExpandMoreIcon />
+        </IconButton>}
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Additional Information:</Typography>
-            <Typography paragraph>{props.article.AdditionalDescription}</Typography>
+            <Typography paragraph>{props.article.additionalDescription}</Typography>
           </CardContent>
         </Collapse>
       </Card>

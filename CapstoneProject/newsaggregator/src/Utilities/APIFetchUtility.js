@@ -38,25 +38,21 @@ export function getFormattedUrl(controllerName: string, methodName: string): str
     }
     else {
         //let baseUrlElement: HTMLInputElement = document.getElementById("baseUrl") as HTMLInputElement; 
-        requestUrl = "http://localhost:44393";
+        requestUrl = "http://localhost:61657";
     }
 
     return requestUrl + "/" + controllerName + "/" + methodName;
 }
 
-export async function FetchApi(url: string, options?: any): Promise<Response> {
+export async function FetchApi(url: URL, options?: any): Promise<Response> {
     try {
-        console.log("Fetch")
-        console.dir(options);
         const res = await fetch(url, options);
-        console.dir(res);
         if (res.status === 401) {
             window.location.reload(true);
         }
         return res;
     } catch (err) {
-        console.log("ERROR")
-        console.log(err);
+        console.log("ERROR: " + err)
         throw err;
     }
 }

@@ -24,10 +24,6 @@ namespace AggregatorController
 
             try
             {
-                //using (AggregatorDB db = new AggregatorDB())
-                //{
-                //    allTopics = (from topics in db.Topics select topics).ToList();
-                //}
                 allTopics = dbContext.Topic.ToList();
             }
             catch (Exception ex)

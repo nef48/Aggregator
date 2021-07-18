@@ -72,6 +72,7 @@ namespace DataModels
 		[Column,        Nullable] public DateTime? DatePublished         { get; set; } // datetime
 		[Column,        Nullable] public string    ArticleDescription    { get; set; } // varchar(256)
 		[Column,        Nullable] public string    AdditionalDescription { get; set; } // varchar(256)
+		[Column,        Nullable] public string    ImageUrl              { get; set; } // varchar(256)
 
 		#region Associations
 

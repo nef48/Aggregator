@@ -34,7 +34,6 @@ namespace AggregatorController
             try
             {
                 topics = AggregatorUtility.GetAllTopics(_resultsContext);
-                //topics = _restultsContext.Topic.Where(x => true).ToList();
             }
             catch (Exception ex)
             {
@@ -44,7 +43,7 @@ namespace AggregatorController
             return topics;
         }
 
-        [HttpGet("GetTopics")]
+        [HttpPost("GetTopics")]
         public List<Topic> GetTopics(int userId)
         {
             List<Topic> topics = new List<Topic>();
@@ -61,7 +60,7 @@ namespace AggregatorController
             return topics;
         }
 
-        [HttpGet("GetTopic")]
+        [HttpPost("GetTopic")]
         public Topic GetTopic(int topicId)
         {
             Topic topic = new Topic();
@@ -124,7 +123,7 @@ namespace AggregatorController
             return result;
         }
 
-        [HttpGet("GetUser")]
+        [HttpPost("GetUser")]
         public Userdata GetUser(int userID)
         {
             Userdata user = new Userdata();
@@ -141,7 +140,7 @@ namespace AggregatorController
             return user;
         }
  
-        [HttpGet("UserLogin")]
+        [HttpPost("UserLogin")]
         public LoginObject UserLogin(string username, string password)
         {
             LoginObject userAndTopics = new LoginObject();
@@ -162,21 +161,23 @@ namespace AggregatorController
 
         #region Article Methods
 
-        [HttpGet("GetArticles")]
-        public List<Article> GetArticles(Topic topic)
+        [HttpPost("GetArticles")]
+        public List<Article> GetArticles(string topic)
         {
             List<Article> articles = new List<Article>();
 
             try
             {
-                articles = AggregatorUtility.GetNewsFeed(_resultsContext, topic).Select(x => new Article()
+                Topic searchTopic = AggregatorUtility.GetAllTopics(_resultsContext).Where(x => x.TopicName.ToLower() == topic.ToLower()).FirstOrDefault();
+                articles = AggregatorUtility.GetNewsFeed(_resultsContext, searchTopic).Select(x => new Article()
                 {
                     ArticleAuthor = x.creator,
                     ArticleDescription = x.description,
                     ArticleLink = x.link,
                     DatePublished = DateTime.Parse(x.pubDate),
                     ArticleTitle = x.title,
-                    AdditionalDescription = x.description1
+                    AdditionalDescription = x.description1,
+                    ImageUrl = x.content?.url ?? ""
                 }).ToList();
             }
             catch (Exception ex)

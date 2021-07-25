@@ -3,10 +3,10 @@ import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import TopicSelectPage from './TopicSelectPage';
-import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import SignupPage from './SignupPage';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -80,6 +80,14 @@ export default function LoginPage() {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
 
+    const handleOpenSignup = () => {
+        setSignupOpen(true);
+    }
+    
+    const handleCloseSignup = () => {
+        setSignupOpen(false);
+    }
+
     return(
         <div>
             <React.Fragment>
@@ -89,7 +97,7 @@ export default function LoginPage() {
                             News Aggregator
                         </Typography>
                         <div className={classes.grow} />
-                        <Button onClick={() => {setSignupOpen(true)}} color="white">Signup</Button>
+                        <Button onClick={handleOpenSignup} color="primary" disableElevation variant="contained">Signup</Button>
                     </Toolbar>
                 </AppBar>
             </React.Fragment>
@@ -106,7 +114,6 @@ export default function LoginPage() {
                         label="Password" 
                         variant="outlined" 
                         type="password" 
-                        autoComplete="current=password" 
                         value={password}
                         style={{ width: 500 }} />
                 </div>
@@ -117,6 +124,7 @@ export default function LoginPage() {
                         style={{ width: 500 }}>Login</Button>
                 </div>
             </div>
+            <SignupPage isOpen={signupOpen} onClose={handleCloseSignup} />
         </div>
     );
 }

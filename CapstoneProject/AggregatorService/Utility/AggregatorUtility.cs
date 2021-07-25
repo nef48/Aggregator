@@ -133,6 +133,9 @@ namespace AggregatorController
                 Userdata user = dbContext.Userdata
                     .Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
 
+                user.LastLogin = DateTime.Now;
+                dbContext.SaveChanges();
+
                 userAndTopics.User = user;
                 userAndTopics.Topics = dbContext.Usertopic.Where(x => x.UserID == user.UserID).Select(x => x.Topic).ToList();
             }

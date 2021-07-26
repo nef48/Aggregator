@@ -88,6 +88,10 @@ export default function LoginPage() {
         setSignupOpen(false);
     }
 
+    const handleLogin = () => {
+
+    }
+
     return(
         <div>
             <React.Fragment>
@@ -121,6 +125,7 @@ export default function LoginPage() {
                     <Button 
                         variant="contained" 
                         color="primary"
+                        onClick={handleLogin}
                         style={{ width: 500 }}>Login</Button>
                 </div>
             </div>

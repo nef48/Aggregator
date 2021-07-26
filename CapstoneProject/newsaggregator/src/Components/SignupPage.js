@@ -38,8 +38,21 @@ export default function SignupPage(props: ISignupPageProps) {
         else {
             setDoPasswordsMatch(true);
 
-            
+            API.AddUser(username, password).then(response => {
+                if (response === true) {
+                    props.onClose();
+                }
+            })
         }
+    }
+
+    const handleDialogClose = () => {
+        setDoPasswordsMatch(true);
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+
+        props.onClose();
     }
 
     return (
@@ -64,16 +77,17 @@ export default function SignupPage(props: ISignupPageProps) {
                             label="Confirm Password"
                             type="password"
                             variant="outlined"
+                            helperText={!doPasswordsMatch ? "Passwords do not match" : ""}
                             onChange={handleConfirmPasswordChange}
                             style={{ width: 400, marginTop: 10 }} />
                     </div>
                 </React.Fragment>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => {handleSubmitSignup}}>
+                <Button color="primary" onClick={handleSubmitSignup}>
                     Signup
                 </Button>
-                <Button color="secondary" onClick={props.onClose}>
+                <Button color="secondary" onClick={handleDialogClose}>
                     Cancel
                 </Button>
             </DialogActions>

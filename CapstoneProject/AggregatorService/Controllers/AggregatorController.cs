@@ -188,6 +188,40 @@ namespace AggregatorController
             return articles;
         }
 
+        [HttpPost("AddArticleToFavorites")]
+        public bool AddArticleToFavorites(int userID, Article article)
+        {
+            bool result = false;
+
+            try
+            {
+                result = AggregatorUtility.AddArticleToFavorites(_resultsContext, userID, article);
+            }
+            catch
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        [HttpPost("UpdateUserPassword")]
+        public string UpdateUserPassword(Userdata user, string newPassword)
+        {
+            string message = string.Empty;
+
+            try
+            {
+                message = AggregatorUtility.ResetPassword(_resultsContext, user.Username, user.Password, newPassword);
+            }
+            catch
+            {
+                message = "Failed to update password.";
+            }
+
+            return message;
+        }
+
         #endregion
     }
 }

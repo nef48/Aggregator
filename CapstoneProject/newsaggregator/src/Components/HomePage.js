@@ -14,9 +14,13 @@ import * as API from '../API/AggregatorAPI';
 import { Topic } from '../Classes/Topic';
 import { IsNullOrUndefined } from '../Utilities/CommonUtilities';
 import ArticleCard from './ArticleCard';
+import UserProfilePage from './UserProfilePage';
+import { UserData } from '../Classes/UserData';
+import LoginPage from './LoginPage';
 
 interface IHomePageProps {
   selectedTopics: Topic[];
+  user: UserData;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -88,26 +92,32 @@ const useStyles = makeStyles((theme) =>
 export default function HomePage(props: IHomePageProps) {
     const classes = useStyles();
     const menuId = 'primary-search-account-menu';
-    //const [allTopics, setAllTopics] = React.useState([]);
     const [selectedTopic, setSelectedTopic] = React.useState(null);
     const [articles, setArticles] = React.useState([]);
+    const [isUserProfileOpen, setUserProfileOpen] = React.useState(false);
 
     React.useEffect(() => {
-      //getAllTopics();
+      let firstTopic = props.selectedTopics[0].TopicName;
+      handleTopicSelection(firstTopic);
     }, []);
 
-    const getAllTopics = () => {
-      API.GetAllTopics().then(response => {
-        //setAllTopics(response);
-      });
-    }
-
     const handleProfileMenuOpen = (event) => {
-      alert("User Profile page opens here.");
+      setUserProfileOpen(true);
     };
 
+    const handleProfilePageClose = () => {
+      setUserProfileOpen(false);
+    }
+
+    const handleLogOff = () => {
+
+    }
+
+    const handleChangeTopics = () => {
+
+    }
+
     const handleTopicSelection = (topic: string) => {
-      //let selectedTopic: Topic = allTopics.find(x => x.TopicName === topic);
       let selectedTopic: Topic = props.selectedTopics.find(x => x.TopicName === topic);
       setSelectedTopic(selectedTopic);
       API.GetNewsFeed(topic).then(response => {
@@ -115,7 +125,6 @@ export default function HomePage(props: IHomePageProps) {
       });
     }
 
-    //let topicList = !IsNullOrUndefined(allTopics) ? allTopics.map(item => {
     let topicList = !IsNullOrUndefined(props.selectedTopics) ? props.selectedTopics.map(item => {
       return (<Button onClick={() => {handleTopicSelection(item.TopicName)}}>{item.TopicName}</Button>)
     }) : <div>Please Select a list of Topics to continue</div>
@@ -126,59 +135,65 @@ export default function HomePage(props: IHomePageProps) {
 
     return (
         <div>
-            <React.Fragment>
-                <AppBar position="fixed">
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            className={classes.menuButton}
-                            color="inherit"
-                            aria-label="open drawer">
-                            <MenuIcon />
-                        </IconButton>
-                        <Typography className={classes.title} variant="h6" noWrap>
-                            News Aggregator
-                        </Typography>
-                        <div className={classes.search}>
-                            <div className={classes.searchIcon}>
-                                <SearchIcon />
-                            </div>
-                            <InputBase
-                                placeholder="Search…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </div>
-                        <div className={classes.grow} />
-                        <div className={classes.sectionDesktop}>
-                            <IconButton
-                                edge="end"
-                                aria-label="account of current user"
-                                aria-controls={menuId}
-                                aria-haspopup="true"
-                                onClick={handleProfileMenuOpen}
-                                color="inherit">
-                                <AccountCircle />
-                            </IconButton>
-                        </div>
-                    </Toolbar>
-                </AppBar>
-            </React.Fragment>
-            <React.Fragment>
-              <div style={{ marginTop: 75 }}>
-                <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
-                  {topicList}
-                </ButtonGroup>
-              </div>
-            </React.Fragment>
-            <React.Fragment>
-              <div style={{ width: "calc(100vw)", overflow: "hidden" }}>
-                {articleList}
-              </div>
-            </React.Fragment>
+          <React.Fragment>
+              <AppBar position="fixed">
+                  <Toolbar>
+                      <IconButton
+                          edge="start"
+                          className={classes.menuButton}
+                          color="inherit"
+                          aria-label="open drawer">
+                          <MenuIcon />
+                      </IconButton>
+                      <Typography className={classes.title} variant="h6" noWrap>
+                          News Aggregator
+                      </Typography>
+                      <div className={classes.search}>
+                          <div className={classes.searchIcon}>
+                              <SearchIcon />
+                          </div>
+                          <InputBase
+                              placeholder="Search…"
+                              classes={{
+                                  root: classes.inputRoot,
+                                  input: classes.inputInput,
+                              }}
+                              inputProps={{ 'aria-label': 'search' }}
+                          />
+                      </div>
+                      <div className={classes.grow} />
+                      <div className={classes.sectionDesktop}>
+                          <IconButton
+                              edge="end"
+                              aria-label="account of current user"
+                              aria-controls={menuId}
+                              aria-haspopup="true"
+                              onClick={handleProfileMenuOpen}
+                              color="inherit">
+                              <AccountCircle />
+                          </IconButton>
+                      </div>
+                  </Toolbar>
+              </AppBar>
+          </React.Fragment>
+          <React.Fragment>
+            <div style={{ marginTop: 75 }}>
+              <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
+                {topicList}
+              </ButtonGroup>
+            </div>
+          </React.Fragment>
+          <React.Fragment>
+            <div style={{ width: "calc(100vw)", overflow: "hidden" }}>
+              {articleList}
+            </div>
+          </React.Fragment>
+          <UserProfilePage 
+            isOpen={isUserProfileOpen} 
+            onClose={handleProfilePageClose} 
+            user={props.user} 
+            changeTopics={handleChangeTopics}
+            logOff={handleLogOff} />
         </div>
     );
 }

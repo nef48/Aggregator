@@ -41,17 +41,28 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
+  favoriteUnclicked: {
+    color: '',
+  },
+  favoriteClicked: {
+    color: 'secondary',
+  },
 }));
 
 export default function ArticleCard(props: IArticleCardProps) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  const [isFavorite, setIsFavorite] = React.useState(false);
 
   console.dir(props.article);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const handleFavoriteClick = () => {
+    setIsFavorite(!isFavorite);
+  }
 
   let dateString = moment(props.article.datePublished).format("MM/DD/YYYY");
 
@@ -66,7 +77,10 @@ export default function ArticleCard(props: IArticleCardProps) {
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
+          <IconButton aria-label="add to favorites" className={clsx(classes.favoriteUnclicked, {
+              [classes.favoriteClicked]: isFavorite,
+            })}
+            onClick={handleFavoriteClick}>
             <FavoriteIcon />
           </IconButton>
           {!IsNullOrEmpty(props.article.additionalDescription) &&

@@ -7,10 +7,16 @@ import MenuIcon from '@material-ui/icons/Menu';
 import * as API from '../API/AggregatorAPI';
 import Typography from '@material-ui/core/Typography';
 import HomePage from './HomePage';
+import TopicButton from './TopicButton';
 import { Topic } from '../Classes/Topic';
 import { IsNullOrUndefined } from '../Utilities/CommonUtilities';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { UserData } from '../Classes/UserData';
+
+interface ITopicSelectPageProps {
+  user: UserData;
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -84,12 +90,14 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function TopicSelectPage() {
+export default function TopicSelectPage(props: ITopicSelectPageProps) {
     const classes = useStyles();
     const [areTopicsSelected, setAreTopicsSelected] = React.useState(false);
     const [selectedTopics, setSelectedTopics] = React.useState([]);
     const [allTopics, setAllTopics] = React.useState([]);
+    //const [topicNames, setTopicNames] = React.useState("");
     const topicMap = {};
+    let topicNames = "";
 
     React.useEffect(() => {
       getAllTopics();
@@ -121,26 +129,24 @@ export default function TopicSelectPage() {
     }
 
     const handleTopicClick = (topicName: string) => {
-        topicMap[topicName] = !topicMap[topicName];
+      topicMap[topicName] = !topicMap[topicName];
+
+      topicNames += (topicName + '\n');
+
+      //setTopicNames(tempTopicNames);
     }
 
     const renderSelectionButtons = () => {
         return(
             !IsNullOrUndefined(allTopics) ? allTopics.map(item => {
                 return (<div style={{ margin: 10, display: "inline-block" }}>
-                    <Button variant="contained" 
+                    <Button variant="contained"
                         onClick={() => {handleTopicClick(item.topicName)}}>{item.topicName}
                     </Button>
+                    {/* <TopicButton onClick={handleTopicClick} topicName={item.topicName} isSelected={topicMap[item.topicName]} /> */}
                 </div>)
             }) : <div>No topics available to select.  Please try again later.</div>);
     }
-
-    let topicNames = "";
-    Object.entries(topicMap).map(([key,value]) => {
-        if (value === true) {
-            topicNames += key + "\n";
-        }
-    });
 
     return(
         <div>
@@ -180,7 +186,7 @@ export default function TopicSelectPage() {
                                     }}
                                     multiline
                                     rows={allTopics.length}
-                                    defaultValue={topicNames}
+                                    value={topicNames}
                                     variant="outlined"
                                 />
                             </div>
@@ -195,7 +201,7 @@ export default function TopicSelectPage() {
             </div>}
             {areTopicsSelected &&
             <React.Fragment>
-                <HomePage selectedTopics={selectedTopics} />
+                <HomePage selectedTopics={selectedTopics} user={props.user} />
             </React.Fragment>}
         </div>
     );

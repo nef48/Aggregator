@@ -3,10 +3,13 @@ import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import TopicSelectPage from './TopicSelectPage';
+import HomePage from './HomePage';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import SignupPage from './SignupPage';
+import * as API from '../API/AggregatorAPI';
+import {IsNullOrUndefined} from '../Utilities/CommonUtilities';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -79,6 +82,18 @@ export default function LoginPage() {
     const [signupOpen, setSignupOpen] = React.useState(false);
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [loginSuccessful, setLoginSuccessful] = React.useState(false);
+    const [firstTimeLogin, setFirstTimeLogin] = React.useState(false);
+    const [userTopics, setUserTopics] = React.useState([]);
+    const [user, setUser] = React.useState(null);
+
+    const handleUsernameChange = (event) => {
+        setUsername(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
 
     const handleOpenSignup = () => {
         setSignupOpen(true);
@@ -89,47 +104,66 @@ export default function LoginPage() {
     }
 
     const handleLogin = () => {
-
+        API.LoginUser(username, password).then(response => {
+            console.dir(response);
+            if (!IsNullOrUndefined(response.user)) {
+              setUser(response.user);
+              if (response.user.username == username) {
+                if (response.topics.length === 0) {
+                    setFirstTimeLogin(true);
+                }
+                else {
+                    setUserTopics(response.topics);
+                    setLoginSuccessful(true);
+                }
+              }
+            }
+            
+        })
     }
 
     return(
         <div>
-            <React.Fragment>
-                <AppBar position="fixed">
-                    <Toolbar>
-                        <Typography className={classes.title} variant="h6" noWrap>
-                            News Aggregator
-                        </Typography>
-                        <div className={classes.grow} />
-                        <Button onClick={handleOpenSignup} color="primary" disableElevation variant="contained">Signup</Button>
-                    </Toolbar>
-                </AppBar>
-            </React.Fragment>
-            <div className="center-screen">
-                <div>
-                    <TextField 
-                        label="Username" 
-                        variant="outlined" 
-                        value={username}
-                        style={{ width: 500 }} />
+            {!firstTimeLogin && !loginSuccessful && <div>
+                <React.Fragment>
+                    <AppBar position="fixed">
+                        <Toolbar>
+                            <Typography className={classes.title} variant="h6" noWrap>
+                                News Aggregator
+                            </Typography>
+                            <div className={classes.grow} />
+                            <Button onClick={handleOpenSignup} color="primary" disableElevation variant="contained">Signup</Button>
+                        </Toolbar>
+                    </AppBar>
+                </React.Fragment>
+                <div className="center-screen">
+                    <div>
+                        <TextField 
+                            label="Username" 
+                            variant="outlined" 
+                            onChange={handleUsernameChange}
+                            style={{ width: 500 }} />
+                    </div>
+                    <div style={{ marginTop: 10 }}>
+                        <TextField 
+                            label="Password" 
+                            variant="outlined" 
+                            type="password" 
+                            onChange={handlePasswordChange}
+                            style={{ width: 500 }} />
+                    </div>
+                    <div style={{ marginTop: 10 }}>
+                        <Button 
+                            variant="contained" 
+                            color="primary"
+                            onClick={handleLogin}
+                            style={{ width: 500 }}>Login</Button>
+                    </div>
                 </div>
-                <div style={{ marginTop: 10 }}>
-                    <TextField 
-                        label="Password" 
-                        variant="outlined" 
-                        type="password" 
-                        value={password}
-                        style={{ width: 500 }} />
-                </div>
-                <div style={{ marginTop: 10 }}>
-                    <Button 
-                        variant="contained" 
-                        color="primary"
-                        onClick={handleLogin}
-                        style={{ width: 500 }}>Login</Button>
-                </div>
-            </div>
-            <SignupPage isOpen={signupOpen} onClose={handleCloseSignup} />
+                <SignupPage isOpen={signupOpen} onClose={handleCloseSignup} />
+            </div>}
+            {firstTimeLogin && <TopicSelectPage user={user} />}
+            {loginSuccessful && <HomePage selectedTopics={userTopics} user={user} />}
         </div>
     );
 }

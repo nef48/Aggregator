@@ -2,11 +2,11 @@ import { Topic } from "./Topic";
 import { UserData } from "./UserData";
 
 export class LoginObject {
-    User: number;
+    User: UserData;
     Topics: Topic[];
 
     constructor() {
-        this.TopicID = new UserData();
-        this.Topics = []];
+        this.User = new UserData();
+        this.Topics = [];
     }
 }

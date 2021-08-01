@@ -7,6 +7,7 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 
 namespace AggregatorTests
 {
@@ -155,6 +156,52 @@ namespace AggregatorTests
             items = AggregatorController.AggregatorUtility.GetNewsFeed(new ResultsContext(optionsBuilder.Options), topic);
 
             Assert.AreNotEqual(items.Count, 0);
+        }
+
+        [TestMethod]
+        public void TestAddArticleToFavorites()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
+
+            ResultsContext dbContext = new ResultsContext(optionsBuilder.Options);
+
+            Userdata expectedUser = AggregatorController.AggregatorUtility.GetUser(dbContext, 1);
+            Topic topic = AggregatorController.AggregatorUtility.GetTopic(dbContext, 1);
+            Article article = AggregatorController.AggregatorUtility.GetNewsFeed(dbContext, topic).Select(x => new Article()
+            {
+                ArticleAuthor = x.creator,
+                ArticleDescription = x.description,
+                ArticleLink = x.link,
+                DatePublished = DateTime.Parse(x.pubDate),
+                ArticleTitle = x.title,
+                AdditionalDescription = x.description1,
+                ImageUrl = x.content?.url ?? ""
+            }).FirstOrDefault();
+
+            bool result = AggregatorController.AggregatorUtility.AddArticleToFavorites(dbContext, expectedUser.UserID, article);
+
+            Assert.AreEqual(result, true);
+        }
+
+        [TestMethod]
+        public void TestUpdateUserPassword()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
+
+            Userdata expectedUser = AggregatorController.AggregatorUtility.GetUser(new ResultsContext(optionsBuilder.Options), 1);
+            string oldPassword = expectedUser.Password;
+
+            string message = AggregatorController.AggregatorUtility.ResetPassword(new ResultsContext(optionsBuilder.Options), expectedUser.Username, expectedUser.Password, "abc123");
+
+            Userdata updatedUser = AggregatorController.AggregatorUtility.GetUser(new ResultsContext(optionsBuilder.Options), 1);
+            string newPassword = updatedUser.Password;
+
+            Assert.AreEqual(message, "Password successfully changed");
+            Assert.AreNotEqual(oldPassword, newPassword);
         }
     }
 }

@@ -124,14 +124,29 @@ namespace AggregatorController
             return user;
         }
 
+        private static Userdata GetUser(ResultsContext dbContext, string username, string password)
+        {
+            Userdata user = null;
+
+            try
+            {
+                user = dbContext.Userdata.Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return user;
+        }
+
         public static LoginObject GetUserAndTopics(ResultsContext dbContext, string username, string password)
         {
             LoginObject userAndTopics = new LoginObject();
 
             try
             {
-                Userdata user = dbContext.Userdata
-                    .Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
+                Userdata user = GetUser(dbContext, username, password);
 
                 user.LastLogin = DateTime.Now;
                 dbContext.SaveChanges();
@@ -145,6 +160,28 @@ namespace AggregatorController
             }
 
             return userAndTopics;
+        }
+
+        public static string ResetPassword(ResultsContext dbContext, string username, string oldPassword, string newPassword)
+        {
+            try
+            {
+                Userdata user = GetUser(dbContext, username, oldPassword);
+
+                if (user == null)
+                {
+                    return "Old password is incorrect";
+                }
+
+                user.Password = newPassword;
+                dbContext.SaveChanges();
+
+                return "Password successfully changed";
+            }
+            catch (Exception ex)
+            {
+                return "Error occurred while trying to update password.";
+            }
         }
         
         #endregion
@@ -171,6 +208,28 @@ namespace AggregatorController
             }
 
             return items;
+        }
+
+        public static bool AddArticleToFavorites(ResultsContext dbContext, int userID, Article article)
+        {
+            Userarticle articleToAdd = new Userarticle()
+            {
+                UserID = userID,
+                Article = article,
+                IsFavorited = true
+            };
+
+            try
+            {
+                dbContext.Userarticle.Add(articleToAdd);
+                dbContext.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

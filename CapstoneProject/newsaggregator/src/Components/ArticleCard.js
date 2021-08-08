@@ -7,6 +7,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,9 +19,11 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Article } from '../Classes/Article';
 import { IsNullOrEmpty } from '../Utilities/CommonUtilities';
+import * as API from '../API/AggregatorAPI';
 
 interface IArticleCardProps {
-    article: Article
+    article: Article;
+    userID: Number;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -41,27 +44,30 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-  favoriteUnclicked: {
-    color: '',
-  },
-  favoriteClicked: {
-    color: 'secondary',
-  },
 }));
 
 export default function ArticleCard(props: IArticleCardProps) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [isFavorite, setIsFavorite] = React.useState(false);
-
-  console.dir(props.article);
+  const [isFavorite, setIsFavorite] = React.useState(false); 
+  const [favoriteButtonColor, setFavoriteButtonColor] = React.useState("");
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
+    let newFavorite = !isFavorite;
+    setIsFavorite(newFavorite);
+
+    if (newFavorite) {
+      setFavoriteButtonColor("secondary");
+
+      API.AddArticleToFavorites(props.article, props.userID);
+    }
+    else {
+      setFavoriteButtonColor("");
+    }
   }
 
   let dateString = moment(props.article.datePublished).format("MM/DD/YYYY");
@@ -69,17 +75,17 @@ export default function ArticleCard(props: IArticleCardProps) {
   return (
     <div style={{ margin: 10 }}>
       <Card className={classes.root} variant="outlined">
-        <CardHeader title={props.article.articleTitle} subheader={"By " + props.article.articleAuthor + " - " + dateString}/>
-        <CardMedia className={classes.media} title={props.article.articleTitle} image={props.article.imageUrl}/>
-        <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {props.article.articleDescription}
-          </Typography>
-        </CardContent>
+        <CardActionArea href={props.article.articleLink} target="_blank">
+          <CardHeader title={props.article.articleTitle} subheader={"By " + props.article.articleAuthor + " - " + dateString}/>
+          <CardMedia className={classes.media} title={props.article.articleTitle} image={props.article.imageUrl}/>
+          <CardContent>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {props.article.articleDescription}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
         <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites" className={clsx(classes.favoriteUnclicked, {
-              [classes.favoriteClicked]: isFavorite,
-            })}
+          <IconButton aria-label="add to favorites" color={favoriteButtonColor}
             onClick={handleFavoriteClick}>
             <FavoriteIcon />
           </IconButton>

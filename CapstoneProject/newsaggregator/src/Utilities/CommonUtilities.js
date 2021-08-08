@@ -5,3 +5,7 @@ export function IsNullOrUndefined(value) {
 export function IsNullOrEmpty(value) {
     return (IsNullOrUndefined(value) || value === "");
 }
+
+export function IsListEmpty(value) {
+    return (IsNullOrUndefined(value) || value.length == 0);
+}

@@ -232,6 +232,22 @@ namespace AggregatorController
             return true;
         }
 
+        public static List<Article> GetFavoriteArticles(ResultsContext dbContext, int userID)
+        {
+            List<Article> articleList = new List<Article>();
+
+            try
+            {
+                articleList = dbContext.Userarticle.Where(x => x.UserID == userID).Select(x => x.Article).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+
+            return articleList;
+        }
+
         #endregion
     }
 }

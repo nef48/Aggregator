@@ -9,13 +9,14 @@ import Typography from '@material-ui/core/Typography';
 import HomePage from './HomePage';
 import TopicButton from './TopicButton';
 import { Topic } from '../Classes/Topic';
-import { IsNullOrUndefined } from '../Utilities/CommonUtilities';
+import { IsListEmpty, IsNullOrUndefined } from '../Utilities/CommonUtilities';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { UserData } from '../Classes/UserData';
 
 interface ITopicSelectPageProps {
   user: UserData;
+  selectedTopics?: string[];
 }
 
 const useStyles = makeStyles((theme) =>
@@ -96,6 +97,7 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
     const [selectedTopics, setSelectedTopics] = React.useState([]);
     const [allTopics, setAllTopics] = React.useState([]);
     //const [topicNames, setTopicNames] = React.useState("");
+    const [updated, setUpdated] = React.useState(false);
     const topicMap = {};
     let topicNames = "";
 
@@ -108,7 +110,12 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
         setAllTopics(response);
 
         allTopics.forEach(item => {
+          if (!IsListEmpty(props.selectedTopics) && props.selectedTopics.indexOf(item.topicName) >= 0) {
+            topicMap[item.topicName] = true;
+          }
+          else {
             topicMap[item.topicName] = false;
+          }
         });
       });
     }
@@ -125,6 +132,13 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
         });
 
         setSelectedTopics(tempTopics);
+
+        tempTopics.map(item => {
+          console.dir(item);
+          let topicID = allTopics.find(x => x.topicName == item.TopicName).topicID;
+          API.AddTopicToUser(topicID, props.user.userID);
+        });
+
         setAreTopicsSelected(true);
     }
 
@@ -133,6 +147,7 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
 
       topicNames += (topicName + '\n');
 
+      setUpdated(true);
       //setTopicNames(tempTopicNames);
     }
 
@@ -152,7 +167,7 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
         <div>
             {!areTopicsSelected &&
             <div>
-                <React.Fragment>
+                {IsListEmpty(props.selectedTopics) &&<React.Fragment>
                     <AppBar position="fixed">
                         <Toolbar>
                             <IconButton
@@ -171,33 +186,33 @@ export default function TopicSelectPage(props: ITopicSelectPageProps) {
                             </Typography>
                         </Toolbar>
                     </AppBar>
-                </React.Fragment>
+                </React.Fragment>}
                 <React.Fragment>
-                    <div style={{ marginTop: 75 }}>
-                        <div style={{ width: "calc(100vw)", overflow: "hidden" }} >
-                            {renderSelectionButtons()}
-                        </div>
-                        <div style={{ marginTop: 75 }}>
-                            <div style={{ display: "inline-block" }}>
-                                <TextField
-                                    label="Selected Topics"
-                                    InputProps={{
-                                        readOnly: true
-                                    }}
-                                    multiline
-                                    rows={allTopics.length}
-                                    value={topicNames}
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div style={{ marginLeft: 50, display: "inline-block" }}>
-                                <Button onClick={() => {applySelectedTopics()}} 
-                                    color="primary" 
-                                    variant="contained">Apply Topics</Button>
-                            </div>
-                        </div>
-                    </div>
-                </React.Fragment>
+                  <div style={{ marginTop: 75 }}>
+                      <div style={{ width: "calc(100vw)", overflow: "hidden" }} >
+                          {renderSelectionButtons()}
+                      </div>
+                      <div style={{ marginTop: 75 }}>
+                          <div style={{ display: "inline-block" }}>
+                              <TextField
+                                  label="Selected Topics"
+                                  InputProps={{
+                                      readOnly: true
+                                  }}
+                                  multiline
+                                  rows={allTopics.length}
+                                  value={topicNames}
+                                  variant="outlined"
+                              />
+                          </div>
+                          <div style={{ marginLeft: 50, display: "inline-block" }}>
+                              <Button onClick={() => {applySelectedTopics()}} 
+                                  color="primary" 
+                                  variant="contained">Apply Topics</Button>
+                          </div>
+                      </div>
+                  </div>
+              </React.Fragment>
             </div>}
             {areTopicsSelected &&
             <React.Fragment>

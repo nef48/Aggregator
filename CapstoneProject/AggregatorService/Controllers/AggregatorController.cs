@@ -189,9 +189,20 @@ namespace AggregatorController
         }
 
         [HttpPost("AddArticleToFavorites")]
-        public bool AddArticleToFavorites(int userID, Article article)
+        public bool AddArticleToFavorites(int userID, string articleTitle, string articleAuthor, string articleLink, DateTime datePublished, string articleDescription, string additionalDescription, string imageUrl)
         {
             bool result = false;
+            Article article = new Article()
+            { 
+                ArticleTitle = articleTitle,
+                ArticleAuthor = articleAuthor,
+                ArticleLink = articleLink,
+                DatePublished = datePublished,
+                ArticleDescription = articleDescription,
+                AdditionalDescription = additionalDescription,
+                ImageUrl = imageUrl
+            };
+
 
             try
             {
@@ -220,6 +231,23 @@ namespace AggregatorController
             }
 
             return message;
+        }
+
+        [HttpPost("GetUserArticles")]
+        public List<Article> GetUserArticles(int userID)
+        {
+            List<Article> articles = new List<Article>();
+
+            try
+            {
+                articles = AggregatorUtility.GetFavoriteArticles(_resultsContext, userID);
+            }
+            catch
+            {
+                articles = null;
+            }
+
+            return articles;
         }
 
         #endregion

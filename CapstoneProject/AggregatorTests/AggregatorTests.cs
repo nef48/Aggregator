@@ -203,5 +203,17 @@ namespace AggregatorTests
             Assert.AreEqual(message, "Password successfully changed");
             Assert.AreNotEqual(oldPassword, newPassword);
         }
+
+        [TestMethod]
+        public void TestGetFavoriteArticles()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ResultsContext>();
+            optionsBuilder.UseMySql("server=localhost;port=3307;user id=root;password=password;database=Aggregator",
+                    mySqlOptions => mySqlOptions.ServerVersion(new Version(8, 0, 25), ServerType.MySql));
+
+            int actualArticleCount = AggregatorController.AggregatorUtility.GetFavoriteArticles(new ResultsContext(optionsBuilder.Options), 1).Count;
+
+            Assert.AreNotEqual(0, actualArticleCount);
+        }
     }
 }

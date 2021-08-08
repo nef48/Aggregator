@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import SignupPage from './SignupPage';
 import * as API from '../API/AggregatorAPI';
 import {IsNullOrUndefined} from '../Utilities/CommonUtilities';
+import { Topic } from '../Classes/Topic';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -113,8 +114,17 @@ export default function LoginPage() {
                     setFirstTimeLogin(true);
                 }
                 else {
-                    setUserTopics(response.topics);
-                    setLoginSuccessful(true);
+                  let tempTopics: Topic[] = [];
+
+                  response.topics.map(item => {
+                    let temp: Topic = new Topic();
+                    temp.TopicName = item.topicName;
+                    temp.TopicID = item.topicID;
+                    tempTopics.push(temp);
+                  });
+
+                  setUserTopics(tempTopics);
+                  setLoginSuccessful(true);
                 }
               }
             }

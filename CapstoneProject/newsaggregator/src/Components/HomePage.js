@@ -16,7 +16,12 @@ import { IsNullOrUndefined } from '../Utilities/CommonUtilities';
 import ArticleCard from './ArticleCard';
 import UserProfilePage from './UserProfilePage';
 import { UserData } from '../Classes/UserData';
-import LoginPage from './LoginPage';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TopicSelectPage from './TopicSelectPage';
 
 interface IHomePageProps {
   selectedTopics: Topic[];
@@ -95,10 +100,14 @@ export default function HomePage(props: IHomePageProps) {
     const [selectedTopic, setSelectedTopic] = React.useState(null);
     const [articles, setArticles] = React.useState([]);
     const [isUserProfileOpen, setUserProfileOpen] = React.useState(false);
+    const [isChangePasswordOpen, setChangePasswordOpen] = React.useState(false);
+    const [isChangeTopicsOpen, setChangeTopicsOpen] = React.useState(false);
+    const [selectedTopics, setSelectedTopics] = React.useState([]);
 
     React.useEffect(() => {
       let firstTopic = props.selectedTopics[0].TopicName;
       handleTopicSelection(firstTopic);
+      setSelectedTopics(props.selectedTopics);
     }, []);
 
     const handleProfileMenuOpen = (event) => {
@@ -106,15 +115,38 @@ export default function HomePage(props: IHomePageProps) {
     };
 
     const handleProfilePageClose = () => {
+      API.GetUserTopics(props.user.userID).then(response => {
+        console.log("response");
+        console.dir(response)
+
+        let topicList = [];
+        response.map(item => {
+          let top: Topic = new Topic();
+          top.TopicName = item.topicName;
+          topicList.push(top);
+        })
+        setSelectedTopics(topicList);
+        handleTopicSelection(topicList[0].TopicName)
+      })
       setUserProfileOpen(false);
     }
 
-    const handleLogOff = () => {
-
+    const handleChangeTopics = () => {
+      setUserProfileOpen(false);
+      setChangeTopicsOpen(true);
     }
 
-    const handleChangeTopics = () => {
+    const handleCloseTopics = () => {
+      setChangeTopicsOpen(false);
+    }
 
+    const handleChangePassword = () => {
+      setUserProfileOpen(false);
+      setChangePasswordOpen(true);
+    }
+
+    const handleClosePasswordChange = () => {
+      setChangePasswordOpen(false);
     }
 
     const handleTopicSelection = (topic: string) => {
@@ -125,12 +157,12 @@ export default function HomePage(props: IHomePageProps) {
       });
     }
 
-    let topicList = !IsNullOrUndefined(props.selectedTopics) ? props.selectedTopics.map(item => {
+    let topicList = !IsNullOrUndefined(selectedTopics) ? selectedTopics.map(item => {
       return (<Button onClick={() => {handleTopicSelection(item.TopicName)}}>{item.TopicName}</Button>)
     }) : <div>Please Select a list of Topics to continue</div>
 
     let articleList = !IsNullOrUndefined(articles) ? articles.map(art => {
-      return (<div style={{ display: "inline-block" }}><ArticleCard article={art} /></div>)
+      return (<div style={{ display: "inline-block" }}><ArticleCard article={art} userID={props.user.userID} /></div>)
     }) : <div>No Articles available for this topic.</div>
 
     return (
@@ -138,29 +170,9 @@ export default function HomePage(props: IHomePageProps) {
           <React.Fragment>
               <AppBar position="fixed">
                   <Toolbar>
-                      <IconButton
-                          edge="start"
-                          className={classes.menuButton}
-                          color="inherit"
-                          aria-label="open drawer">
-                          <MenuIcon />
-                      </IconButton>
                       <Typography className={classes.title} variant="h6" noWrap>
                           News Aggregator
                       </Typography>
-                      <div className={classes.search}>
-                          <div className={classes.searchIcon}>
-                              <SearchIcon />
-                          </div>
-                          <InputBase
-                              placeholder="Search…"
-                              classes={{
-                                  root: classes.inputRoot,
-                                  input: classes.inputInput,
-                              }}
-                              inputProps={{ 'aria-label': 'search' }}
-                          />
-                      </div>
                       <div className={classes.grow} />
                       <div className={classes.sectionDesktop}>
                           <IconButton
@@ -192,8 +204,8 @@ export default function HomePage(props: IHomePageProps) {
             isOpen={isUserProfileOpen} 
             onClose={handleProfilePageClose} 
             user={props.user} 
-            changeTopics={handleChangeTopics}
-            logOff={handleLogOff} />
+            changeTopics={handleChangeTopics} 
+            selectedTopics={props.selectedTopics}/>
         </div>
     );
 }
